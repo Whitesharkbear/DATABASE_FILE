@@ -1,0 +1,12 @@
+
+	1. test 이름의 스키마를 생성.
+	2. test 스키마에서
+
+		컬럼명	아이디	암호		이름		가입일자	전화번호		주소
+		형식 		varchar(20) varchar(20) varchar(20)	date		varchar(20)		varchar(20)
+		제약조건	기본키	not null	not null			not null		not null
+		
+	3. '회원'테이블에 SQL문으로
+		컬럼명은 포인트, 데이터타입 int, 기본값 20 컬럼을 추가.
+	4. 그외 학습내용 적용.
+	5. test스키마를 삭제하시오.

@@ -1,0 +1,8 @@
+
+	DML
+		insert 	: 생성(c)	
+		insert into 테이블(컬럼, 컬럼, 컬럼) values (값, 값, 값); : 컬럼수와 값수가 같아야하며 순서도 같아야한다.
+
+		select 	: 검색(r)	 
+		update	: 수정(u)
+		delete 	: 삭제(d)

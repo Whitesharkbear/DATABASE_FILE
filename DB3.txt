@@ -1,0 +1,12 @@
+
+	SQL(언어)
+		DDL(정의) : create, drop, alter, index, view
+		DML(조작) : select, insert, update, delete
+		DCL(제어) : grant, revoke
+	
+	데이터타입
+		정수 : tyinyint, smallint, int(21억), bigint
+		고정소수형 : decimal(5,2) -999.00~999.99, numeric
+		부동소수형 : float, double
+		문자 : char(n) 고정자리, varchar(n), text, enum('부장', '과장', '대리', '사원')
+		날짜/시간 : date, time, datetime, timestamp, year
