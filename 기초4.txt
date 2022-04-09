@@ -1,0 +1,24 @@
+1. DB연동 자바빈즈 생성 - ~DAO.java
+   - DAO(Database Access Object)
+
+2. Member 테이블 생성
+   컬럼리스트 : ID(pk), Name(not null), Addr(null), HP(not null), Mdate(not null)
+
+	-- MEMBER 테이블 생성
+	-- 형식 : CREATE TABLE 테이블명 (컬럼명  데이터타입(길이)  제약조건 ... )
+	CREATE TABLE MEMBER(
+ 	   ID      VARCHAR2(50)    PRIMARY KEY,
+  	  NAME    VARCHAR2(30)    NOT NULL,
+  	  ADDR    VARCHAR2(100),
+  	  HP      VARCHAR2(50)    NOT NULL,
+  	  MDATE   DATE
+	);
+
+	-- 테이블 생성 확인
+	SELECT * FROM USER_TABLES WHERE TABLE_NAME='MEMBER';
+
+	-- 테이블 구조 
+	DESC MEMBER;
+	SELECT * FROM MEMBER;
+
+3. Member 테이블과 연동할 자바빈즈 생성 : MemberDAO, MemberVO

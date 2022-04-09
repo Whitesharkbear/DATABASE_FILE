@@ -1,0 +1,35 @@
+1. JAVA 플랫폼 (Full Stack)
+	1) JAVA SE(Standard Edition) - JDK설치
+	2) JAVA EE(Enterprise Edition) - WAS(Web Application Server) 설치
+		: Tomcat, JEUS, WebLogic ...
+	3) JAVA ME(Micro Edition) - Android Studio ...	
+
+	JAVA EE			JAVA ME
+	-----------------------------------------
+			JAVA SE
+
+2. Web Programming | Web Application Programming
+	1) Web Programming : Static Content 
+		- HTML, CSS, JavaScript, JQuery
+	2) Web Application Programming : Dynamic Content 
+		- JSP/Servlet, PHP, ASP, ASP.net ...	
+	3) 서비스
+		- Web Server : Static Content 서비스
+			종류 : Apache, IIS(Internet Information Service), WebToB ...
+		- Web Application Server : Dynamic Content 서비스
+			종류 : Apache Tomcat, JEUS, WebLogic ...
+
+3. Front - End | Back - End
+	1) Front - End : 클라이언트(웹브라우저)에서 실행됨 - Static Content
+	2) Back - End : WAS에서 실행됨 - Dynamic Content
+
+	웹클라이언트 --- Web Server + Application Server --- DataBase
+	(웹브라우저)	     (웹서버)	        (로직 서버)                (데이터베이스)
+
+	3) N - Tier 구조 정리
+
+4. Back - End 개발을 위한 모델 제공 https://nickjoit.tistory.com/9
+	1) Model 1(MVC 1) - JSP(Controller, View) + Java Beans(Model)
+		+ 장단점 정리
+	2) Model 2(MVC 2) - Servlet(Controller) + Java Beans(Model) + JSP(View)
+		+ 장단점 정리
