@@ -1,0 +1,34 @@
+JSP REQUEST
+ 	request 객체는 jsp에서 기본적으로 지원하는 내장객체로써 웹 브라우저가 웹 서버로 보내는 요청 정보를 담고 있습니다
+
+ 서버와 클라이언트에 관한 메서드
+
+	메서드			리턴타입	설명
+	getRemoteAddr()		String		웹 서버와 연결된 클라이언트의 ip주소를 문자열로 반환합니다.
+
+	getContentLength()	long		클라이언트가 전송한 요청 정보의 길이를 반환합니다.
+
+	getProtocol()		String		클라이언트가 요청한 프로토콜을 문자열로 반환합니다.
+
+	getMethod()		String		get,post등 정보를 요청한 방식을 문자열로 반환합니다.
+
+	getRequestURI		String		정보를 요청한 클라이언트의 url을 반환합니다.
+
+	getContextPath()		String		현재 jsp페이지가 속한 웹 
+
+	getServerName()		String		자신이 사용한 서버 이름을 반환합니다.
+
+	getServerPort()		int		서버가 실행중인 포트 번호를 반환합니다.
+
+ 전송된 정보를 받는 메서드
+
+	메서드					리턴타입		설명
+	getParameter(String name)		String			키(key) 이름과 연결된 값(value)을 반환합니다.
+
+	getParmeterValues(String name)	String[]		하나에 키 이름에 담긴 여러 개의 값을 배열로 반환합니다. 
+
+	getParameterNames()			Enumeration	웹 브라우저가 전송한 모든 키 이름들을 반환합니다.
+
+	getParameterMap()			HashMap		웹 브라우저가 전송한 키와 값을 맵의 형태로 반환합니다.
+
+참고:)	https://lifejusik1004.tistory.com/entry/JSP-request-%EB%82%B4%EC%9E%A5%EA%B0%9D%EC%B2%B4%EC%9D%98-%EC%A0%95%EC%9D%98%EC%99%80-%EB%A9%94%EC%84%9C%EB%93%9C	
