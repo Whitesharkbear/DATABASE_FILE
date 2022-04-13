@@ -1,0 +1,39 @@
+Gson
+Gson은 Java에서 Json을 파싱하고, 생성하기 위해 사용되는 구글에서 개발한 오픈소스입니다.
+Java Object를 Json 문자열로 변환할 수 있고, Json 문자열을 Java Object로 변환할 수 있습니다.
+
+2. Gson 라이브러리 추가하기 
+ 
+1) Maven  
+JSON 파싱에 사용할 json-simple 라이브러리를 추가하기 위해
+pom.xml 파일에 아래와 같이 dependency를 추가합니다.
+
+<dependency>
+  <groupId>com.google.code.gson</groupId>
+  <artifactId>gson</artifactId>
+  <version>2.8.7</version>
+</dependency>
+ 
+2) Gradle  
+
+dependencies {
+ implementation 'com.google.code.gson:gson:2.8.7'
+}
+ 
+
+ 3) 직접 추가하기  
+
+https://search.maven.org/artifact/com.google.code.gson/gson/2.8.7/jar
+위 링크에서 jar를 직접 다운받아서, 라이브러리에 추가합니다.
+
+
+3. Gson 객체 생성하기
+Gson 객체를 생성하는 방법은 2가지
+
+- new Gson()
+- new GsonBuilder.create()
+
+
+
+
+출처: https://hianna.tistory.com/629#gson1 [어제 오늘 내일]
