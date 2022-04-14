@@ -1,0 +1,31 @@
+Json Values
+종류			방법
+a string		{"name":"홍길동} - p1
+a number		{"age":20} - p2
+an object		{"obj":{"name":"hong"}} - p3
+an array		{"array":[1,2,3,4,5]} - p4
+a boolean		{"boolean":true} - p5
+null			{"str":null} - p6
+
+Example)
+p1.name; 		// 홍길동
+p2.age;		// 20
+★----------------------------------★
+p3.obj; 		// object
+p3.obj.name; 	// hong
+p4.array;	 	// object
+p4.array[2];		// 3
+★----------------------------------★
+p5.boolean;		// true
+p6.str;		// null
+
+넣을 수 없는 타입
+- a function
+- a date
+- undefined
+
+
+
+
+
+
