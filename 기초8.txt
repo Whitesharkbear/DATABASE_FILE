@@ -1,0 +1,39 @@
+SPRING - IBM개발자 ---> POJO(Plain Old Java Object) 개발방식 // 참고서적 : 토비의 스프링
+	1) SoftWare 재사용 방안
+		- 복사(Copy) & 붙이기(Paste).
+		- 메서드(Method) 호출.
+		- 클래스 재사용(상속).
+		- AOP(Aspect Oriented Programming).
+		  ---> OOP 기능을 확장시켜 객체지향다운 프로그래밍이 가능하도록 함.
+
+	2) 디자인 패턴(Design Pattern)
+		디자인 패턴이란? 
+		: 프로그램에서 자주 사용하는 기능이나 모듈 등을 재사용하기 편하게 묶을 수 있는 방법을 제시한 개념.
+		* GOF( Gang Of Four )의 디자인 
+
+	3) 프레임워크 		// 검색필요
+		- 요구사항을 만족하는 구조와 안정적인 기능을 실행하도록 제어해주는 라이브러리 집합.
+		- 사용하는 이유 : 비기능적인 요소들이 초기 개발단계에서 구현되어야하는 불편함 감소됨.
+				      기능적인 개발에만 집중할 수 있음.
+				      디자인 패턴을 내부적으로 적용하여 반복적인 객체 생성이나 문제들을 해결할 수 있음.
+		** 개발자는 프레임워크의 기반코드를 확장하여 사용하면서, 프레임워크 안에 적용된 디자인 패턴을 익힐 수 있다.
+
+	4) 스프링 프레임워크 (.jar : Library파일에 있는거)
+		- POJO 방식으로 개발을 지원하는 프레임워크
+		- 구성요소 : 
+			IoC( Inversion of Control ) : '제어의 역전' 즉, 인스턴스의 생성부터 소멸까지를 개발자가 아닌 컨테이너가 대신 해준다는 의미.
+ 							     컨테이너가 개발자가 하던 인스턴스의 제어권한을 위임받아 진행함.
+			DI( Dependency Injection ) : 클래스간의 의존관계를 빈 설정 정보를 컨테이너가 자동으로 연결해주는 것.
+
+	5) 스프링 프레임워크 개발환경 구축
+		- 이클립스 환경 ---> 스프링 프레임워크 라이브러리 추가
+		- Spring.io 	    ---> STS( Spring Tool Suits : 이클립스 + 스프링 라이브러리 )
+		  사이트 : http://spring.io - 3.9.18 Release version (jdk 11)
+
+	6) 스프링 MVC 프로젝트 생성 실습
+		- 프로젝트명 : myspring2
+		- 컨텍스트 패스 : spring
+		- 실행 주소 : http://localhost:9000/spring/test
+		- 컨트롤러명 : TestController.java
+		- view 명 : test.jsp
+		- 실행결과 : Welcome to Spring World~!!
