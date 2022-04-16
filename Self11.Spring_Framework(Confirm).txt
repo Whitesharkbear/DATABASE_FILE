@@ -1,0 +1,11 @@
+MVC FrameWork 구조
+Dispatcher Servlet 	--> 	  Handler Mapping 		--> 		Dispatcher Servlet  
+(web.xml)		      	     	  (Request 정보를 명세서화)
+					  (HomeController.java)
+-->		Handler Adapter		-->		Controller		-->		View name
+								(HomeController.java)		("home")
+-->		Handler Adapter		-->		Dispatcher Servlet 		-->		Veiw Resolver
+		+ View name				+ View name
+		   ("home")					   ("home")
+-->		Dispatcher Servlet 	-->		Views			==>		Website	
+		(home.jsp)					(home.jsp)
