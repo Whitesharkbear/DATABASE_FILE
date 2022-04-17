@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		var library = { "name":"강남구 도서관",
+						"list":[
+								{"name" : "JAVA", "isbn" : 1234, "price" : 30000},
+								{"name" : "CSS", "isbn" : 5678, "price" : 20000},
+								{"name" : "HTML", "isbn" : 9034, "price" : 10000}
+						]
+					   };
+		//강남구 도서관에 있는 도서리스트를 테이블형식으로 출력하세요.
+		var output = "<h1>"+library.name+"</h1>";
+			output += "<table border=1>";
+			output += "<tr>";
+			output += "<th>도서명</th><th>도서번호</th><th>가격</th>";
+			output += "</tr>";
+		var booklist = library.list;
+		for(var i in library.list){
+			output += "<tr>";
+			output += "<td>" + booklist[i].name + "</td>";
+			output += "<td>" + booklist[i].isbn+ "</td>";
+			output += "<td>" + booklist[i].price + "</td>";
+			output += "</tr>";
+			}
+			output += "</table>";
+			$("body").append(output);
+	});
+</script>
+</head>
+<body>
+
+</body>
+</html>

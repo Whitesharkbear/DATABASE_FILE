@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		var employees = {"title":"H그룹 사원정보",
+						 "list":[{"empno":7536, "name":"hong", "job":"manager", "deptno":20},
+								 {"empno":7535, "name":"jong", "job":"developer", "deptno":30},
+						  		 {"empno":7537, "name":"gang", "job":"sales", "deptno":10}]};
+		// body 안에 테이블 형식으로 사원정보를 출력해주세요.
+		var output = "<h1>" + employees.title + "</h1>";
+			output += "<table border=1>";
+			output += "<tr>";
+			output += "<th>사원번호</th><th>사원명</th><th>직무</th><th>부서번호</th>";
+			output += "</tr>";
+		for(var i in employees.list){
+			output += "<tr>";
+			output += "<td>" + employees.list[i].empno + "</td>";
+			output += "<td>" + employees.list[i].name + "</td>";
+			output += "<td>" + employees.list[i].job + "</td>";
+			output += "<td>" + employees.list[i].deptno + "</td>";
+			output += "</tr>";
+			}
+			output += "</table>";
+		
+		$("body").append(output);
+	});
+</script>
+<style>
+	table { border-collapse:collapse; }
+	th, td {
+		font-size: 12pt;
+		color:blue;
+	}
+</style>
+</head>
+<body>
+	
+</body>
+</html>

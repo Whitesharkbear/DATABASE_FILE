@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		var person = {name:"홍길동",'age':20,"addr":"seoul"};
+		var output = "<table border=1>";
+		output += "<tr>";
+		output += "<td>Name</td><td>Age</td><td>Addr</td>";
+		output += "</tr>";
+		output += "<tr>";
+		output += "<td>" + person.name + "</td>";
+		output += "<td>" + person.age + "</td>";
+		output += "<td>" + person.addr + "</td>";
+		output += "</tr>";
+		output += "</table>";
+		
+		$("h1").after(output);
+		
+		// = var person = {'name':"홍길동"};
+		// = var person = {"name":"홍길동"};
+		// alert(person.name);
+		// $("#output").append("<li>" + person.name + "</li>");
+		// $("#output").append("<li>" + person.age + "</li>");
+		// $("#output").append("<li>" + person.addr + "</li>");
+	});
+	
+</script>
+</head>
+<body>
+	<h1>JSON TEST</h1>
+
+</body>
+</html>
