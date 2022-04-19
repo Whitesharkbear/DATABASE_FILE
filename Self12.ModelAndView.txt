@@ -1,0 +1,42 @@
+ModelAndView
+
+Web MVC Framework에서 Model과 View 둘 다 저장할 수 있다. 
+Handler가 Return 한 Model과 View를 나타내며, DispatcherServlet에 의해 분석된다.
+View는 ViewResolver 객체에 의해 명시된 String view name를 가져와 사용할 수 있다.
+ModelAndView는 Model과 같이 Interface가 아니라 Class로 구현되어있다.
+따라서 내부에서 객체를 생성하여 사용한다.
+
+-ModelAndView구조
+public class ModelAndView {
+    @Nullable
+    private Object view;
+    @Nullable
+    private ModelMap model;
+    @Nullable
+    private HttpStatus status;
+    private boolean cleared = false;
+
+-ModelMap구조
+public class ModelMap extends LinkedHashMap<String, Object> {
+    public ModelMap() {
+    }
+
+    public ModelMap(String attributeName, @Nullable Object attributeValue) {
+        this.addAttribute(attributeName, attributeValue);
+    }
+
+    public ModelMap(Object attributeValue) {
+        this.addAttribute(attributeValue);
+    }
+
+    public ModelMap addAttribute(String attributeName, @Nullable Object attributeValue) {
+        Assert.notNull(attributeName, "Model attribute name must not be null");
+        this.put(attributeName, attributeValue);
+        return this;
+    }
+
+다음과 같이 ModelAndView는 크게 view,model,status로 구성되어있다.
+(1) view: view의 path를 담는다.
+(2) model: ModelMap 자료형이며 ModelMap은 HashMap을 상속함으로써
+Key,Value로 접근이 가능하다. 이때 Key는 Model이 가지고 있는 변수명이고 value는 값이 된다.
+(3) status: status의 경우 https의 상태를 의미한다.
