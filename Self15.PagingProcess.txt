@@ -1,0 +1,139 @@
+1. 컨트롤러 - DB연동 부분
+------------------------------------------------------------------
+
+	String rpage = request.getParameter("page");
+	BoardDAO dao = new BoardDAO();	
+	
+	//페이징 처리 - startCount, endCount 구하기
+	int startCount = 0;
+	int endCount = 0;
+	int pageSize = 5;	//한페이지당 게시물 수
+	int reqPage = 1;	//요청페이지	
+	int pageCount = 1;	//전체 페이지 수
+	int dbCount = dao.execTotalCount();	//DB에서 가져온 전체 행수
+	
+	//총 페이지 수 계산
+	if(dbCount % pageSize == 0){
+		pageCount = dbCount/pageSize;
+	}else{
+		pageCount = dbCount/pageSize+1;
+	}
+	
+	//요청 페이지 계산
+	if(rpage != null){
+		reqPage = Integer.parseInt(rpage);
+		startCount = (reqPage-1) * pageSize+1;
+		endCount = reqPage *pageSize;
+	}else{
+		startCount = 1;
+		endCount = 5;
+	}
+	
+	ArrayList<BoardVO> list = dao.getList(startCount, endCount);
+	
+	//BoardDAO dao = new BoardDAO();
+	//ArrayList<BoardVO> list = dao.getList();
+
+------------------------------------------------------------------
+2. BoardDAO- DB에서 전체 카운트 가져오기
+------------------------------------------------------------------
+	public int execTotalCount(){
+		int result =0;
+		NoticeDAO dao = new NoticeDAO();
+		result = dao.execTotalCount();
+		return result;
+	}
+------------------------------------------------------------------ 
+3. DAO - DB에서 전체 카운트 가져오기
+------------------------------------------------------------------
+	/* 전체 카운트 가져오기*/
+	//execTotalCount()
+	public int execTotalCount(){
+		int count = 0;
+		String sql = " select count(*) from mycgv_board";
+		getPreparedStatement(sql);
+		
+		try {
+			rs = pstmt.executeQuery();
+			if(rs.next()) count = rs.getInt(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return count;
+	}
+------------------------------------------------------------------------------------------
+4. DAO - startCount, endCount를 이용한 전체 리스트 출력 쿼리 수정
+------------------------------------------------------------------------------------------
+	//Select --> 전체 리스트 : 페이징 처리
+	public ArrayList<BoardVO> getList(int start, int end){
+		ArrayList<BoardVO> list = new ArrayList<BoardVO>();
+		String sql = "select rno, bid, btitle, bhit, bdate "
+						+ " from (select rownum rno, bid, btitle, bhit, to_char(bdate, 'yyyy-mm-dd') bdate "
+						+ " from (select bid, btitle, bhit, bdate from mycgv_board " 
+						+ " order by bdate desc)) "
+						+ " where rno between ? and ?";
+		getPreparedStatement(sql);
+		
+		try {
+			pstmt.setInt(1, start);
+			pstmt.setInt(2, end);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				BoardVO vo = new BoardVO();
+				vo.setRno(rs.getInt(1));
+				vo.setBid(rs.getString(2));
+				vo.setBtitle(rs.getString(3));
+				vo.setBhit(rs.getInt(4));
+				vo.setBdate(rs.getString(5));
+				
+				list.add(vo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		close();
+		
+		return list;
+	}
+------------------------------------------------------------------------------------------
+5. JSP 코드(notice_list.jsp) - 페이징 처리 부분(제이쿼리)
+------------------------------------------------------------------------------------------
+<link rel="stylesheet" href="http://localhost:9000/mycgv/css/mycgv.css">
+<link rel="stylesheet" href="http://localhost:9000/mycgv/css/am-pagination.css">
+<script src="http://localhost:9000/mycgv/js/jquery-3.6.0.min.js"></script>
+<script src="http://localhost:9000/mycgv/js/am-pagination.js"></script>
+<script>
+	$(document).ready(function(){
+		
+		var pager = jQuery('#ampaginationsm').pagination({
+		
+		    maxSize: 7,	    		// max page size
+		    totals: <%=dbCount%>,	// total pages	
+		    page: <%=rpage%>,		// initial page		
+		    pageSize: 5,			// max number items per page
+		
+		    // custom labels		
+		    lastText: '&raquo;&raquo;', 		
+		    firstText: '&laquo;&laquo;',		
+		    prevText: '&laquo;',		
+		    nextText: '&raquo;',
+				     
+		    btnSize:'sm'	// 'sm'  or 'lg'		
+		});
+		
+		jQuery('#ampaginationsm').on('am.pagination.change',function(e){
+			   jQuery('.showlabelsm').text('The selected page no: '+e.page);
+	           $(location).attr('href', "http://localhost:9000/mycgv/board/board_list.jsp?page="+e.page);         
+	    });
+		
+ 	});
+</script> 
+
+
+-- 페이징 출력 부분
+<%-- 페이지 네비게이션 시작 --%>						
+<td colspan=4><div id="ampaginationsm"></div></td>
+<%-- 페이지 네비게이션 종료  --%>
+------------------------------------------------------------------
