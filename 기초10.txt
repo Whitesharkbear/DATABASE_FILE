@@ -1,0 +1,39 @@
+1. 페이징 처리 로직 ---> 전체행의 수, 한페이지출력 수, 전체페이지 수 
+	(strart, end) ---> DB에서 start, end 에 해당하는 행을 출력
+	String rpage = request.getParameter("page");
+		BoardDAO dao = new BoardDAO();	
+	
+		//페이징 처리 - startCount, endCount 구하기
+		int startCount = 0;
+		int endCount = 0;
+		int pageSize = 5;	//한페이지당 게시물 수
+		int reqPage = 1;	//요청페이지	
+		int pageCount = 1;	//전체 페이지 수
+		int dbCount = dao.execTotalCount();	//DB에서 가져온 전체 행수
+	
+		//총 페이지 수 계산
+		if(dbCount % pageSize == 0){
+			pageCount = dbCount/pageSize;
+		}else{
+			pageCount = dbCount/pageSize+1;
+		}
+	
+		//요청 페이지 계산
+		if(rpage != null){
+			reqPage = Integer.parseInt(rpage);
+			startCount = (reqPage-1) * pageSize+1;
+			endCount = reqPage *pageSize;
+		}else{
+			startCount = 1;
+			endCount = 5;
+		}
+	
+2. start, end ---> 범위에 해당하는 데이터를 출력하기 위한 SQL 작성
+	where 컬럼명 Between 시작(start) and 종료(end)
+	where 컬럼명 >= 시작(start) and 컬럼명 <= 종료(end)
+
+3. 페이징처리 화면을 구현 ---> 부트스트랩 
+
+
+
+
