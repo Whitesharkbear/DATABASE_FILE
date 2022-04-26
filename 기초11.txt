@@ -1,0 +1,27 @@
+<파일 업로드>
+
+0. DB의 테이블에는 파일의 이름만 저장, 실제파일은 서버에 저장
+
+1. DB의 테이블 구조 - bfile(사용자가 선택한 파일명) , bsfile(서버에 저장되는 파일명)
+	1-1. resources \ upload 폴더 생성
+
+2. 개발환경에 따른 라이브러리 준비 - Spring MVC Framework
+	메이븐 - Maven Repository 에서 commons - io, commons - fileupload
+	---> pom.xml
+
+3. Bean 생성 ---> ServletContext.xml
+	<!-- multipartResolver -->
+		<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</beans:bean> 
+
+4. 파일업로드 폼에 enctype = 'multipart/form-data' 추가
+
+5. VO에서 CommonsMultipartFile 타입으로 폼에서 넘어오는 데이터 저장
+	- bfile, bsfile이 아닌 다른 이름 생성
+
+6. 컨트롤러에서 VO에 저장된 파일 객체의 유무를 판단하고, 
+	파일명.getOriginalfilename() 메소드로 bfile을 출력함.
+	bfile+UUID (Ramdom 클래스 등) 형식으로 bsfile 출력함.
+	VO 에 저정 후 DB전송
+	실제 파일을 서버에 저장 : request 객첼르 통해 서버의  upload 저장위치 가져옴
+	File 객체를 생성하여  upload 위치에 저장함
