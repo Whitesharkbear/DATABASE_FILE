@@ -1,0 +1,9 @@
+형상관리 서버 - GitHub, SVN, Perforce ...
+
+1. GitHub 회원가입 후 토큰 생성
+	토큰 : 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	
+	주소 : https://github.com/Whitesharkbear/TeamProject_F5.git
+
+2. 레파지토리 삭제
+	
+   
