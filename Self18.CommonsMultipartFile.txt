@@ -1,0 +1,340 @@
+
+
+1. MultipartResolver 설정
+Multipart 지원 기능을 이용하려면 먼저 MultipartResolver를 스프링 설정 파일에 등록해 주어야 한다. MultipartResolver는 Multipart 형식으로 데이터가 전송된 경우, 해당 데이터를 스프링 MVC에서 사용할 수 있도록 변환해준다.
+스프링이 기본으로 제공하는 MultipartResolver는 CommmnosMultipartResolver이다. CommmnsMultipartResolver는 Commons FileUpload API를 이용해서 Multipart를 처리해준다.
+CommmonsMultipartResolver를 MultipartResolver로 사용하려면 다음과 같이 빈 이름으로 "multipartResolver"를 등록하면 된다.
+
+<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
+
+cf.) DispatcherServlet은 이름이 "multipartResolver"인 빈을 사용하기 때문에 다른 이름을 지정할 경우 MultipartResolver로 사용되지 않는다.
+MultipartResolver bean객체를 등록했습니다.
+
+MultipartResolver는 Muiltpart객체를 컨트롤러에 전달하는 역할을 합니다.
+
+<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <beans:property name="maxUploadSize" value="200000000" />
+    <beans:property name="maxInMemorySize" value="200000000" />
+</beans:bean>
+
+Colored by Color Scripter
+
+※ CommonsMultipartResolver 클래스의 프로퍼티
+ 
+property			 type 			
+maxUploadSize		long		최대 업로드 가능한 바이트 크기, -1은 제한이 없음을 의미한다. 기본 값은 -1이다.
+maxInMemorysize		int		디스크에 임시 파일을 생성하기 전에 메모리에 보관할 수 있는 최대 바이트 크기,
+						기본 값은 10240 바이트이다.
+defaultEncording		String		요청을 파싱할 때 사용할 캐릭터 인코딩, 지정하지 않은 경우 HttpServletRequest.setEncording() 메서드로 지정한 캐릭터셋이 사용된다.
+						아무 값도 없을 경우 ISO-8859-1을 사용한다.
+ 
+* java.lang.NoClassDefFoundError: org/apache/commons/fileupload/FileItemFactory 혹은
+java.lang.ClassNotFoundException: org.apache.commons.io.output.DeferredFileOutputStream 에러가 발생 시
+pom.xml에 아래 코드를 추가
+ 
+<!-- common fileupload -->
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.2.1</version>
+</dependency>
+ 
+ 
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>1.4</version>
+</dependency>
+Colored by Color Scripter
+cs
+ 
+
+2-1. @RequestParam어노테이션을 이용한 업로드 파일 접근
+ 
+파일 업로드를 할 때는 form의 enctype = multipart/form-data로 작성해야하고, method = post여야 합니다.
+그래야 MultipartResolver가 multipartFile객체를 컨트롤러에 전달할 수 있습니다.
+업로드한 파일을 전달받는 첫 번째 방법은 @RequestParam어노테이션이 적용된 MultipartFile타입의 파라미터를 사용하는 것이다. 예를 들어, HTML 입력폼이 다음과 같이 작성되어 있다고 해보자
+
+<!-- enctype="application/x-www-form-urlencoded"는 default이므로 생략가능. ASCII코드로 전송해서 업로드 -->
+    <!-- 파일 안의 내용은 ASCII코드로 변환불가해서 파일명만 전송된다. -->
+    <!-- 파일 내용까지 전송하기 위해 binary type으로 변환 - "multipart/form-data" -->
+    <form action="submitReport1" method="POST" enctype="multipart/form-data">
+        학번 : <input type="text" name="studentNumber" /><br/>
+        리포트 파일 : <input type="file" name="report" /><br/>
+        <input type="submit" />
+</form>
+
+Colored by Color Scripter
+위 HTML 코드에서 파일은 report 파라미터를 통해서 전달된다. 
+이 경우 다음 코드와 같이 @RequestParam 어노테이션과 MultipartFile 타입의 파라미터를 이용해서 업로드 파일 데이터를 전달받을 수 있다. 
+컨트롤러에서는 MultipartFile 객체를 통해 파일을 받습니다.
+
+@RequestMapping(value="/report/submitReport1", method=RequestMethod.POST)                                                            //IOException - 파일이 없을 때 발생할 에러. 호출함수인 xml의 DispatcherServlet class로 예외처리 전가
+    public String submitReport1(@RequestParam("studentNumber") String studentNumber, @RequestParam("report") MultipartFile report) throws IOException {    //command객체가 아닌 request로 submit한 값 받아오기     //studentNumber - submissionForm의 속성 name 
+        //파일명
+        String originalFile = report.getOriginalFilename();
+        //파일명 중 확장자만 추출                                                //lastIndexOf(".") - 뒤에 있는 . 의 index번호
+        String originalFileExtension = originalFile.substring(originalFile.lastIndexOf("."));
+        //fileuploadtest.doc
+        //lastIndexOf(".") = 14(index는 0번부터)
+        //substring(14) = .doc
+        
+        //업무에서 사용하는 리눅스, UNIX는 한글지원이 안 되는 운영체제 
+        //파일업로드시 파일명은 ASCII코드로 저장되므로, 한글명으로 저장 필요
+        //UUID클래스 - (특수문자를 포함한)문자를 랜덤으로 생성                    "-"라면 생략으로 대체
+        String storedFileName = UUID.randomUUID().toString().replaceAll("-", "") + originalFileExtension;
+        
+        //파일을 저장하기 위한 파일 객체 생성
+        file = new File(filePath + storedFileName);
+        //파일 저장
+        report.transferTo(file);
+        
+        System.out.println(studentNumber + "가 업로드한 파일은");
+        System.out.println(originalFile + "은 업로드한 파일이다.");
+        System.out.println(storedFileName + "라는 이름으로 업로드 됐다.");
+        System.out.println("파일사이즈는 " + report.getSize());
+        return "report/submissionComplete";
+    }
+Colored by Color Scripter
+MultipartFile 인터페이스는 스프링에서 업로드 한 파일을 표현할 때 사용되는 인터페이스로서, MultipartFile 인터페이스를 이용해서 업로드 한 파일의 이름, 실제 데이터, 파일 크기 등을 구할 수 있다.
+ 
+2-2. MultipartHttpServletRequest를 이용한 업로드 파일 접근
+업로드한 파일을 전달받는 두 번째 방법은 MultipartHttpServletRequest 인터페이스를 이용하는 것이다.
+
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+ 
+@Controller
+public class ReportSubmissionController {
+    @RequestMapping(value = "/report/submitReport2.do", method = RequestMethod.POST)
+    public String submitReport2(MultipartHttpServletRequest request) {
+        String studentNumber = request.getParameter("studentNumber");
+        MultipartFile report = request.getFile("report");
+        printInfo(studentNumber, report);
+        return "report/submissionComplete";
+    }
+}
+
+Colored by Color Scripter
+MultopartHttpServletRequest 인터페이스는 스프링이 제공하는 인터페이스로서, Multipart 요청이 들어올 때 내부적으로 원본 HttpServletRequest 대신 사용되는 Multipart 요청이 들어올 때
+ 
+내부적으로 원본 HttpServletRequest 대신 사용되는 인터페이스이다. MultipartHttpServletRequest 인터페이스는 실제로는 어떤 메서드도 선언하고 있지 않으며, HttpServletRequest 인터페이스와 MultipartRequest 인터페이스를 상속받고 있다. MultipartHttpServletRequest 인터페이스는 javax.servlet.HttpServletRequest 인터페이스를 상속받기 때문에 웹 요청 정보를 구하기 위한 getParameter()나 getHeader()와 같은 메서드를 사용할 수 있으며, 추가로 MultipartRequest 인터페이스가 제공하는 Multipart 관련 메서드를 사용할 수 있다.
+
+※ MultipartRequest 인터페이스의 파일 관련 주요 메서드
+메소드						설명
+Iterator<String> getFileNames() 		업로드 된 파일들의 이름 목록을 제공하는 Iterator를 구한다.
+MultipartFile getfile(String name)		파라미터 이름이 name이 업로드 파일 정보를 구한다.
+List<MultipartFile> getFiles(String name)	파라미터 이름이 name인 업로드 파일 정보 목록을 구한다.
+Map<String, MultipartFile> getFileMap()	파라미터 이름을 키로 파라미터에 해당하는 파일 정보를 값으로 하는 Map을 구한다.
+
+
+2-3. 커맨드 객체를 통한 업로드 파일 접근
+
+커맨드 객체를 이용해도 업로드 한 파일을 전달받을 수 있다. 단지 커맨드 클래스에 파라미터와 동일한 이름의 MultipartFile 타입 프로퍼티를 추가해주기만 하면 된다.
+예를 들어, 업로드 파일의 파라미터 이름이 "report"인 경우, 다음과 같이 "report" 프로퍼티를 커맨드 클래스에 추가해 주면 된다.
+ 
+public class ReportCommand {
+    //필드명이 jsp파일의 input type 속성들 name과 같아야한다.
+    private String studentNumber;
+    private MultipartFile report;
+    
+    public String getStudentNumber() {
+        return studentNumber;
+    }
+    public void setStudentNumber(String studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+    public MultipartFile getReport() {
+        return report;
+    }
+    public void setReport(MultipartFile report) {
+        this.report = report;
+    }
+}
+
+Colored by Color Scripter
+위 코드와 같이 MultipartFile 타입의 프로퍼티를 커맨드 클래스에 추가해주었다면, @RequestMapping 메서드의 커맨드 객체로 사용함으로써 업로드 파일 정보를 커맨드 객체를 통해서 전달받을 수 있게 된다.
+
+@Controller
+public class ReportSubmissionController1 {
+    private ReportService reportService;
+    
+    public void setReportService(ReportService reportService) {
+        this.reportService = reportService;
+    }
+ 
+    @RequestMapping(value="/report/submission1", method=RequestMethod.GET)
+    public String form() {
+        return "report/submissionForm1";
+    }
+    
+    @RequestMapping(value="/report/submitReport2")
+    public String submitReport2(ReportCommand reportCommand) throws IOException{
+        boolean result = reportService.fileupload(reportCommand);
+        if(result==false) {
+            System.out.println("파일이 저장 안 됐다.");
+            return "report/submissionForm1";
+        }
+        System.out.println("파일 저장 완료");
+        return "report/submissionComplete";
+    }
+}
+
+Colored by Color Scripter
+
+ 
+3. MultupartFile 인터페이스 사용
+org.springframework.web.MutipartFile인터페이스는 업로드한 파일 및 파일데이터를 표현하기 위한 용도로 사용된다.
+ 
+※ MulripartFile 인터페이스의 주요 메서드
+메소드								설명
+String getName()							파라미터 이름을 구한다.
+String getOriginalFilename()					업로드한 파일의 이름을 구한다.
+String isEmpty()							업로드한 파일이 존재하지 않는 경우 true를 리턴한다.
+long getSize()							업로드한 파일의 크기를 구한다.
+byte[ ] getBytes() throws IOExcetion				업로드한 파일 데이터를 구한다.
+InputStream getInputStream() throws IOException	업로드한 파일 데이터를 읽어오는 InputStream을 구한다. InputStream의 사용이 끝나면 알맞게 종료해주어야 한다.
+void transferTo(File dest) throws IOException		업로드한 파일 데이터를 지정한 파일에 저장한다.
+									업로드 한 파일 데이터를 구하는 가장 단순한 방법은 MultipartFile.getByte() 메서드를 이용하는 것이다. 바이트 배열을 구한 뒤에 파일이나 DB등에 저장하면된다.
+
+if(mutipartFile.isEmpty()){
+    byte[ ] fileData = multipartFile.getBytes();
+    //byte 배열을 파일/DB/네트워크 등으로 전송
+    ...
+}
+
+업로드한 파일데이터를 특정 파일로 저장하고 싶다면 MultipartFile.transferTo() 메서드를 사용하는 것이 편리하다.
+
+if(mutipartFile.isEmpty()){
+    File file = new File(fileName);
+    multipartFile.transferTo(file);
+    ...
+}
+
+
+출처: http://devbox.tistory.com/entry/Spring-파일업로드-처리 [장인개발자를 꿈꾸는 :: 기록하는 공간]
+
+private FileOutputStream fos = null;
+        
+public String uploadResult(@RequestParam("selFile") MultipartFile mFile) throws Exception, IOException {
+    String fileExtension = mFile.getOriginalFilename().substring(mFile.getOriginalFilename().lastIndexOf("."));
+    String storedFileName = UUID.randomUUID().toString().replaceAll("-",  "") + fileExtension;
+    String filePath = "C:\\eclipse\\workspace\\memPid\\src\\main\\webapp\\resources\\";
+    File file = new File(filePath + storedFileName);
+    //첫 번째 방법, MultipatrFile클래스의 transferTo()를 사용하여 업로드하려는 파일을 특정파일로 저장
+    //MultipartFile.transferTo(File file) - Byte형태의 데이터를 File객체에 설정한 파일 경로에 전송한다.
+    mFile.transferTo(file);
+    
+    //두 번째 방법, MultipatrFile클래스의 getBytes()로 multipartFile의 데이터를 바이트배열로 추출한 후, FileOutputStream클래스의 write()로 파일을 저장
+    try {
+        //MultipatrFile클래스의 getBytes()를 사용해서 multipartFile의 데이터를 바이트배열로 추출
+        byte fileData[] = mFile.getBytes();
+        fos = new FileOutputStream(filePath + mFile.getOriginalFilename());
+        //FileOutputStream클래스의 write()로 파일을 filePath에 저장
+        fos.write(fileData);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }finally {
+        if(fos != null) {
+            fos.close();
+        }
+    }
+    return "upload_result";
+}
+Colored by Color Scripter
+cs
+ 
+
+사용 예
+
+
+화면단 예
+
+<!--화면단(JSP)-->
+<form action="submitReport1" method="POST" enctype="multipart/form-data">
+            학번 : <input type="text" name="studentNumber" /><br/>
+            리포트 파일 : <input type="file" name="reportFile" /><br/>
+              <input type="submit" />
+</form>
+ 
+
+서비스단 예				
+주요 사용 객체
+
+String filePath    ,                //파일을 저장할 경로
+String originalFile,            //원본 파일명
+String originalFileExtension,    //원본파일의 확장자명
+String storedFileName,            //filePath/DB에 저장할 파일명
+MultipartFile multipartFile,    //화면단에서 전달되는 파일 받을 객체
+File file    //java.io.File        //전달받은 파일을 저장할 때 사용하는 객체
+ 
+String filePath =
+//            "C:\\Users\\FUTURE\\Documents\\hkedu_project\\final_project\\src\\main\\webapp\\WEB-INF\\resource\\";
+            "C:\\Users\\HKEDU\\Documents\\hkedu_project\\final_project\\src\\main\\webapp\\WEB-INF\\resource\\";
+//            "C:\\Users\\HKEDU\\Documents\\hkedu_project\\final_project\\src\\main\\webapp\\WEB-INF\\resource\\";
+//            "C:\\Users\\hotelalpha\\Documents\\hkedu_project\\final_project\\src\\main\\webapp\\WEB-INF\\resource\\";
+File file = New File(filePath);
+Colored by Color Scripter
+cs
+ 
+
+ 
+
+화면단에서 업로드한 파일(foodImage)을 전달받아서 지정 경로에 저장하고, 파일의 정보를 DB에 저장하는 방법
+
+1. command객체(FoodRegCommand) 사용
+
+MultipartFile multipartFile = foodRegCommand.getFoodImage();
+//*커맨드객체 사용 시 커맨드객체 내의 필드타입은 MultipartFile이어야한다.
+//private MultipartFile report;
+
+2. @RequestParam 어노테이션과 MultipartFile 타입의 파라미터를 이용
+
+public String submitReport1(@RequestParam("studentNumber") String studentNumber, @RequestParam("report") MultipartFile multipartFile) throws IOException {    
+//command객체가 아닌 request로 submit한 값 받아오기     
+//studentNumber - submissionForm의 속성 name
+
+
+3. MultipartHttpServletRequest를 이용한 업로드 파일 접근
+
+public String submitReport2(MultipartHttpServletRequest request) {
+        String studentNumber = request.getParameter("studentNumber");
+        MultipartFile report = request.getFile("report");
+
+공통
+
+//파일명
+String originalFile = multipartFile.getOriginalFilename();
+//파일명 중 확장자만 추출
+//fileuploadtest.doc
+//lastIndexOf(".") = 14(index는 0번부터)
+//substring(14) = .doc
+String  originalFileExtension = originalFile.substring(originalFile.lastIndexOf("."));
+//업무에서 사용하는 리눅스, UNIX는 한글지원이 안 되는 운영체제 
+//파일업로드시 파일명은 ASCII코드로 저장되므로, 한글명으로 저장 필요
+//UUID클래스 - (특수문자를 포함한)문자를 랜덤으로 생성                    "-"라면 생략으로 대체
+String  storedFileName = UUID.randomUUID().toString().replaceAll("-", "") + originalFileExtension;
+//파일을 저장하기 위한 File객체 생성
+//java.io.File
+File file = new File(filePath + storedFileName);
+//업로드요청으로 전달받은 파일을 위에서 설정한 특정 경로에 특정 파일명으로 저장
+multiFile.transferTo(file);
+//전달받아 저장한 파일의 이름 및 저장된 경로, 용량을 DB에 저장
+ foodReview = new FoodReview();
+                foodReview.setMemberEmail(memberEmail);
+                foodReview.setFoodNo(foodReviewWriteCommand.getFoodNo());
+                foodReview.setSellerEmail(foodReviewWriteCommand.getSellerEmail());
+                ...
+                foodReview.setFoodReviewSize(multiFile.getSize());
+                foodReview.setFoodReviewOriginal(originalFile);
+                foodReview.setFoodReviewStored(storedFileName);
+                
+                int k = foodRepository.insertFoodReview(foodReview);
+
+ 
+ 
+
+ 
+
+
+
